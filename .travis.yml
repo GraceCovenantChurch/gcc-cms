@@ -24,16 +24,6 @@ deploy:
     repo: GraceCovenantChurch/gcc-cms
   skip_cleanup: true
   local_dir: deploy_upload
-- provider: s3
-  access_key_id: $TRAVIS_AWS_ACCESS_KEY
-  secret_access_key: $TRAVIS_AWS_SECRET_KEY
-  bucket: $AWS_S3_BUCKET
-  region: us-east-1
-  on:
-    branch: master
-    repo: GraceCovenantChurch/gcc-cms
-  skip_cleanup: true
-  local_dir: build
 - provider: codedeploy
   access_key_id: $TRAVIS_AWS_ACCESS_KEY
   secret_access_key: $TRAVIS_AWS_SECRET_KEY
