@@ -1,0 +1,47 @@
+language: node_js
+node_js:
+  - "stable"
+
+cache:
+  directories:
+    - "node_modules"
+
+script:
+  - npm run build
+
+before_deploy:
+  - mkdir -p deploy_upload
+  - git archive HEAD --format=zip --output=deploy_upload/latest.zip
+
+deploy:
+- provider: s3
+  access_key_id: $TRAVIS_AWS_ACCESS_KEY
+  secret_access_key: $TRAVIS_AWS_SECRET_KEY
+  bucket: $AWS_S3_BUCKET
+  region: us-east-1
+  on:
+    branch: master
+    repo: GraceCovenantChurch/gcc-cms
+  skip_cleanup: true
+  local_dir: deploy_upload
+- provider: s3
+  access_key_id: $TRAVIS_AWS_ACCESS_KEY
+  secret_access_key: $TRAVIS_AWS_SECRET_KEY
+  bucket: $AWS_S3_BUCKET
+  region: us-east-1
+  on:
+    branch: master
+    repo: GraceCovenantChurch/gcc-cms
+  skip_cleanup: true
+  local_dir: build
+- provider: codedeploy
+  access_key_id: $TRAVIS_AWS_ACCESS_KEY
+  secret_access_key: $TRAVIS_AWS_SECRET_KEY
+  bucket: $AWS_S3_BUCKET
+  key: latest.zip
+  bundle_type: zip
+  application: gcc.cms.production
+  deployment_group: cms.production
+  region: us-east-1
+  on:
+    branch: master
